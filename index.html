@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+  <meta charset="utf-8" />
+  <title>马丁计算</title>
+  <script>
+    function sdCal() {
+      var fx2 = document.getElementById("sdfx2");
+      var pz2 = document.getElementById("sdpz2");
+      var fx = 1;
+      if (fx2.checked) {
+        fx = -1;
+      }
+      var pz = 100;
+      if (pz2.checked) {
+        pz = 200;
+      }
+      var bs = getBeishuByDw("sddw1");
+      var sumDw = 0;
+      var sumSh = 0;
+      for (var i = 1; i <= 10; i++) {
+        sumDw = sumDwById(sumDw, "sddw" + i, "sdsh" + i);
+        sumSh = sumShById(sumSh, "sdsh" + i);
+      }
+      var pj = sumDw / sumSh;
+      for (var i = 0; i < bs; i++) {
+        pj = pj * 10;
+      }
+      pj = pj + pz * fx;
+      for (var i = 0; i < bs; i++) {
+        pj = pj / 10;
+      }
+      if (sumSh > 0) {
+        document.getElementById("sdzydw").innerHTML = pj.toFixed(bs);
+      } else {
+        document.getElementById("sdzydw").innerHTML = "0";
+      }
+    }
+
+    function zdCal() {
+      var fx2 = document.getElementById("zdfx2");
+      var pz2 = document.getElementById("zdpz2");
+      var md3 = document.getElementById("md3");
+      var fx = 1;
+      if (fx2.checked) {
+        fx = -1;
+      }
+      var add = 300;
+      var zy = 100;
+      var fbDw = 1.5;
+      var fbSh = 1.5;
+      if (md3.checked) {
+        fbDw = 1.2
+      }
+      if (pz2.checked) {
+        add = 1000;
+        zy = 200;
+        fbDw = 2;
+        fbSh = 2;
+      }
+      var dw = document.getElementById("zddw");
+      var sh = document.getElementById("zdsh");
+      var bs = getBeishuByDw("zddw");
+      var zdZy = document.getElementById("zdzy");
+      if (dw.value !== "") {
+        var tmpDw = dw.value * 1;
+        for (var i = 0; i < bs; i++) {
+          tmpDw = tmpDw * 10;
+        }
+        var x = tmpDw + zy * fx;
+        for (var i = 0; i < bs; i++) {
+          x = x / 10;
+        }
+        zdZy.innerText = x.toFixed(bs);
+      } else {
+        zdZy.innerText = "0";
+      }
+      for (var i = 1; i <= 10; i++) {
+        setMdDw(i, add, fbDw, bs, dw.value, fx);
+        setMdSh(i, sh.value, fbSh);
+        setMdZy(i, bs, dw.value, sh.value, zy, fx);
+      }
+    }
+
+    function setMdDw(index, addDw, fbDw, bs, dw, fx) {
+      var mdDw = document.getElementById("mddw" + index);
+      if (dw === "") {
+        mdDw.innerText = "0";
+      } else {
+        var add = 1;
+        for (var x = 0; x < index - 1; x++) {
+          var xxx = 1;
+          for (var y = 0; y <= x; y++) {
+            xxx = xxx * fbDw;
+          }
+          add += xxx;
+        }
+        addDw = addDw * add;
+        for (var x = 0; x < bs; x++) {
+          addDw = addDw / 10;
+        }
+        mdDw.innerText = (dw - addDw * fx).toFixed(bs)
+        mdDw.value = (dw - addDw * fx).toFixed(bs)
+      }
+    }
+
+    function setMdSh(index, sh, fbSh) {
+      var mdSh = document.getElementById("mdsh" + index);
+      for (var x = 0; x < index; x++) {
+        var y = sh * fbSh;
+        sh = Number(y.toFixed(2));
+      }
+      mdSh.innerText = sh.toFixed(2);
+      mdSh.value = sh.toFixed(2);
+    }
+
+    function setMdZy(index, bs, dw, sh, zy, fx) {
+      var mdZy = document.getElementById("mdzy" + index);
+      if (dw === "" || sh === "") {
+        mdZy.innerText = "0";
+        return;
+      }
+      var sumDw = dw * sh;
+      var sumSh = sh *1;
+      for (var i = 1; i <= index; i++) {
+        sumDw = sumDwById(sumDw, "mddw" + i, "mdsh" + i);
+        sumSh = sumShById(sumSh, "mdsh" + i);
+      }
+      var pj = sumDw / sumSh;
+      for (var i = 0; i < bs; i++) {
+        pj = pj * 10;
+      }
+      pj = pj + zy * fx;
+      for (var i = 0; i < bs; i++) {
+        pj = pj / 10;
+      }
+      if (sumSh > 0) {
+        mdZy.innerText = pj.toFixed(bs);
+      } else {
+        mdZy.innerText = "0";
+      }
+    }
+
+    function sumDwById(sumDw, dwId, shId) {
+      var dw = document.getElementById(dwId);
+      var sh = document.getElementById(shId);
+      if (dw.value !== "" && sh.value !== "") {
+        sumDw = sumDw + dw.value * sh.value * 1;
+      }
+      return sumDw;
+    }
+
+    function sumShById(sumSh, shId) {
+      var sh = document.getElementById(shId);
+      if (sh.value !== "") {
+        sumSh = sumSh + sh.value * 1;
+      }
+      return sumSh;
+    }
+
+    function getBeishuByDw(dwId) {
+      var dw = document.getElementById(dwId);
+      var index = dw.value.indexOf(".");
+      var length = dw.value.length;
+      if (index < 0) {
+        return 0;
+      }
+      return length - 1 - index;
+    }
+
+    function resetSh() {
+      resetInputById("sddw1", "sdsh1");
+      resetInputById("sddw2", "sdsh2");
+      resetInputById("sddw3", "sdsh3");
+      resetInputById("sddw4", "sdsh4");
+      resetInputById("sddw5", "sdsh5");
+      resetInputById("sddw6", "sdsh6");
+      resetInputById("sddw7", "sdsh7");
+      resetInputById("sddw8", "sdsh8");
+      resetInputById("sddw9", "sdsh9");
+      resetInputById("sddw10", "sdsh10");
+      sdCal();
+    }
+
+    function resetInputById(dwId, shId) {
+      var dw = document.getElementById(dwId);
+      dw.value = "";
+      var sh = document.getElementById(shId);
+      sh.value = "";
+    }
+
+  </script>
+</head>
+
+<body>
+  <table border="1">
+    <tr>
+      <td>
+        <table>
+          <tr>自动计算</tr>
+          <tr>
+            <td><input id="md2" type="radio" name="mdver" value="1" checked="checked" onchange="zdCal()">马丁2.0</td>
+            <td><input id="md3" type="radio" name="mdver" value="0" onchange="zdCal()">马丁3.0</td>
+          </tr>
+          <tr>
+            <td><input id="zdfx1" type="radio" name="zdfx" value="1" checked="checked" onchange="zdCal()">多单</td>
+            <td><input id="zdfx2" type="radio" name="zdfx" value="0" onchange="zdCal()">空单</td>
+          </tr>
+          <tr>
+            <td><input id="zdpz1" type="radio" name="zdpz" value="1" checked="checked" onchange="zdCal()">货币</td>
+            <td><input id="zdpz2" type="radio" name="zdpz" value="0" onchange="zdCal()">黄金</td>
+          </tr>
+          <tr>
+            <td>&nbsp</td>
+            <td style="color: red;">点位</td>
+            <td style="color: green;">手数</td>
+            <td style="color: black;">止盈</td>
+          </tr>
+          <tr>
+            <td>正常单：</td>
+            <td><input id="zddw" type="text" oninput="zdCal()" placeholder="输入点位"></td>
+            <td><input id="zdsh" type="text" oninput="zdCal()" placeholder="输入手数"></td>
+            <td id="zdzy" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+          <tr>
+            <td>第1单马丁：</td>
+            <td id="mddw1" style="color: red;">0</td>
+            <td id="mdsh1" style="color: green;">0.00</td>
+            <td id="mdzy1" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+          <tr>
+            <td>第2单马丁：</td>
+            <td id="mddw2" style="color: red;">0</td>
+            <td id="mdsh2" style="color: green;">0.00</td>
+            <td id="mdzy2" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+          <tr>
+            <td>第3单马丁：</td>
+            <td id="mddw3" style="color: red;">0</td>
+            <td id="mdsh3" style="color: green;">0.00</td>
+            <td id="mdzy3" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+          <tr>
+            <td>第4单马丁：</td>
+            <td id="mddw4" style="color: red;">0</td>
+            <td id="mdsh4" style="color: green;">0.00</td>
+            <td id="mdzy4" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+          <tr>
+            <td>第5单马丁：</td>
+            <td id="mddw5" style="color: red;">0</td>
+            <td id="mdsh5" style="color: green;">0.00</td>
+            <td id="mdzy5" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+          <tr>
+            <td>第6单马丁：</td>
+            <td id="mddw6" style="color: red;">0</td>
+            <td id="mdsh6" style="color: green;">0.00</td>
+            <td id="mdzy6" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+          <tr>
+            <td>第7单马丁：</td>
+            <td id="mddw7" style="color: red;">0</td>
+            <td id="mdsh7" style="color: green;">0.00</td>
+            <td id="mdzy7" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+          <tr>
+            <td>第8单马丁：</td>
+            <td id="mddw8" style="color: red;">0</td>
+            <td id="mdsh8" style="color: green;">0.00</td>
+            <td id="mdzy8" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+          <tr>
+            <td>第9单马丁：</td>
+            <td id="mddw9" style="color: red;">0</td>
+            <td id="mdsh9" style="color: green;">0.00</td>
+            <td id="mdzy9" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+          <tr>
+            <td>第10单马丁：</td>
+            <td id="mddw10" style="color: red;">0</td>
+            <td id="mdsh10" style="color: green;">0.00</td>
+            <td id="mdzy10" style="color: black; padding-left: 20px; padding-right: 20px;">0</td>
+          </tr>
+        </table>
+      </td>
+      <td>
+        <table>
+          <tr>手动计算</tr>
+          <tr>
+            <td><input id="sdfx1" type="radio" name="sdfx" value="1" checked="checked" onchange="sdCal()">多单</td>
+            <td><input id="sdfx2" type="radio" name="sdfx" value="0" onchange="sdCal()">空单</td>
+          </tr>
+          <tr>
+            <td><input id="sdpz1" type="radio" name="sdpz" value="1" checked="checked" onchange="sdCal()">货币</td>
+            <td><input id="sdpz2" type="radio" name="sdpz" value="0" onchange="sdCal()">黄金</td>
+          </tr>
+          <tr>
+            <td>第1单：</td>
+            <td><input id="sddw1" type="text" oninput="sdCal()" placeholder="输入点位"></td>
+            <td><input id="sdsh1" type="text" oninput="sdCal()" placeholder="输入手数"></td>
+          </tr>
+          <tr>
+            <td>第2单：</td>
+            <td><input id="sddw2" type="text" oninput="sdCal()" placeholder="输入点位"></td>
+            <td><input id="sdsh2" type="text" oninput="sdCal()" placeholder="输入手数"></td>
+          </tr>
+          <tr>
+            <td>第3单：</td>
+            <td><input id="sddw3" type="text" oninput="sdCal()" placeholder="输入点位"></td>
+            <td><input id="sdsh3" type="text" oninput="sdCal()" placeholder="输入手数"></td>
+          </tr>
+          <tr>
+            <td>第4单：</td>
+            <td><input id="sddw4" type="text" oninput="sdCal()" placeholder="输入点位"></td>
+            <td><input id="sdsh4" type="text" oninput="sdCal()" placeholder="输入手数"></td>
+          </tr>
+          <tr>
+            <td>第5单：</td>
+            <td><input id="sddw5" type="text" oninput="sdCal()" placeholder="输入点位"></td>
+            <td><input id="sdsh5" type="text" oninput="sdCal()" placeholder="输入手数"></td>
+          </tr>
+          <tr>
+            <td>第6单：</td>
+            <td><input id="sddw6" type="text" oninput="sdCal()" placeholder="输入点位"></td>
+            <td><input id="sdsh6" type="text" oninput="sdCal()" placeholder="输入手数"></td>
+          </tr>
+          <tr>
+            <td>第7单：</td>
+            <td><input id="sddw7" type="text" oninput="sdCal()" placeholder="输入点位"></td>
+            <td><input id="sdsh7" type="text" oninput="sdCal()" placeholder="输入手数"></td>
+          </tr>
+          <tr>
+            <td>第8单：</td>
+            <td><input id="sddw8" type="text" oninput="sdCal()" placeholder="输入点位"></td>
+            <td><input id="sdsh8" type="text" oninput="sdCal()" placeholder="输入手数"></td>
+          </tr>
+          <tr>
+            <td>第9单：</td>
+            <td><input id="sddw9" type="text" oninput="sdCal()" placeholder="输入点位"></td>
+            <td><input id="sdsh9" type="text" oninput="sdCal()" placeholder="输入手数"></td>
+          </tr>
+          <tr>
+            <td>第10单：</td>
+            <td><input id="sddw10" type="text" oninput="sdCal()" placeholder="输入点位"></td>
+            <td><input id="sdsh10" type="text" oninput="sdCal()" placeholder="输入手数"></td>
+          </tr>
+          <tr>
+            <td>止盈点位：</td>
+            <td>
+              <p id="sdzydw" style="color: red;">0</p>
+            </td>
+            <td>
+              <input type="button" onclick="resetSh()" value="重置">
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+
+</body>
+
+</html>
