@@ -41,18 +41,14 @@
     function zdCal() {
       var fx2 = document.getElementById("zdfx2");
       var pz2 = document.getElementById("zdpz2");
-      var md3 = document.getElementById("md3");
       var fx = 1;
       if (fx2.checked) {
         fx = -1;
       }
       var add = 300;
       var zy = 100;
-      var fbDw = 1.5;
+      var fbDw = 1.2;
       var fbSh = 1.5;
-      if (md3.checked) {
-        fbDw = 1.2
-      }
       if (pz2.checked) {
         add = 1000;
         zy = 200;
@@ -199,10 +195,6 @@
       <td>
         <table>
           <tr>自动计算</tr>
-          <tr>
-            <td><input id="md2" type="radio" name="mdver" value="1" checked="checked" onchange="zdCal()">马丁2.0</td>
-            <td><input id="md3" type="radio" name="mdver" value="0" onchange="zdCal()">马丁3.0</td>
-          </tr>
           <tr>
             <td><input id="zdfx1" type="radio" name="zdfx" value="1" checked="checked" onchange="zdCal()">多单</td>
             <td><input id="zdfx2" type="radio" name="zdfx" value="0" onchange="zdCal()">空单</td>
