@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+  <meta charset="utf-8" />
+  <title>马丁计算</title>
+  <script>
+    function sdCal() {
+      var fx2 = document.getElementById("sdfx2");
+      var pz2 = document.getElementById("sdpz2");
+      var fx = 1;
+      if (fx2.checked) {
+        fx = -1;
+      }
+      var pz = 100;
+      if (pz2.checked) {
+        pz = 200;
+      }
+      var bs = getBeishuByDw("sddw1");
+      var sumDw = 0;
+      var sumSh = 0;
+      for (var i = 1; i <= 10; i++) {
+        sumDw = sumDwById(sumDw, "sddw" + i, "sdsh" + i);
+        sumSh = sumShById(sumSh, "sdsh" + i);
+      }
+      var pj = sumDw / sumSh;
+      for (var i = 0; i < bs; i++) {
+        pj = pj * 10;
+      }
+      pj = pj + pz * fx;
+      for (var i = 0; i < bs; i++) {
+        pj = pj / 10;
+      }
+      if (sumSh > 0) {
+        document.getElementById("sdzydw").innerHTML = pj.toFixed(bs);
+      } else {
+        document.getElementById("sdzydw").innerHTML = "0";
+      }
+    }
+
+    function zdCal() {
+      var fx2 = document.getElementById("zdfx2");
+      var pz2 = document.getElementById("zdpz2");
+      var fx = 1;
+      if (fx2.checked) {
+        fx = -1;
+      }
+      var add = 300;
+      var zy = 100;
+      var fbDw = 1.1;
+      var fbSh = 1.5;
+      if (pz2.checked) {
+        add = 1000;
+        zy = 200;
+        fbDw = 2;
+        fbSh = 2;
+      }
+      var dw = document.getElementById("zddw");
+      var sh = document.getElementById("zdsh");
+      var bs = getBeishuByDw("zddw");
+      var zdZy = document.getElementById("zdzy");
+      if (dw.value !== "") {
+        var tmpDw = dw.value * 1;
+        for (var i = 0; i < bs; i++) {
+          tmpDw = tmpDw * 10;
+        }
+        var x = tmpDw + zy * fx;
+        for (var i = 0; i < bs; i++) {
+          x = x / 10;
+        }
+        zdZy.innerText = x.toFixed(bs);
+      } else {
+        zdZy.innerText = "0";
+      }
+      for (var i = 1; i <= 10; i++) {
+        setMdDw(i, add, fbDw, bs, dw.value, fx);
+        setMdSh(i, sh.value, fbSh);
+        setMdZy(i, bs, dw.value, sh.value, zy, fx);
+      }
+    }
+
+    function setMdDw(index, addDw, fbDw, bs, dw, fx) {
+      var mdDw = document.getElementById("mddw" + index);
+      if (dw === "") {
+        mdDw.innerText = "0";
+      } else {
+        var add = 1;
+        for (var x = 0; x < index - 1; x++) {
+          var xxx = 1;
+          for (var y = 0; y <= x; y++) {
+            xxx = xxx * fbDw;
+          }
+          add += xxx;
+        }
+        addDw = addDw * add;
+        for (var x = 0; x < bs; x++) {
+          addDw = addDw / 10;
+        }
+        mdDw.innerText = (dw - addDw * fx).toFixed(bs)
+        mdDw.value = (dw - addDw * fx).toFixed(bs)
+      }
+    }
+
+    function setMdSh(index, sh, fbSh) {
+      var mdSh = document.getElementById("mdsh" + index);
+      for (var x = 0; x < index; x++) {
+        var y = sh * fbSh;
+        sh = Number(y.toFixed(2));
+      }
+      mdSh.innerText = sh.toFixed(2);
+      mdSh.value = sh.toFixed(2);
+    }
+
+    function setMdZy(index, bs, dw, sh, zy, fx) {
+      var mdZy = document.getElementById("mdzy" + index);
+      if (dw === "" || sh === "") {
+        mdZy.innerText = "0";
+        return;
+      }
+      var sumDw = dw * sh;
+      var sumSh = sh *1;
+      for (var i = 1; i <= index; i++) {
+        sumDw = sumDwById(sumDw, "mddw" + i, "mdsh" + i);
+        sumSh = sumShById(sumSh, "mdsh" + i);
+      }
+      var pj = sumDw / sumSh;
+      for (var i = 0; i < bs; i++) {
+        pj = pj * 10;
+      }
+      pj = pj + zy * fx;
+      for (var i = 0; i < bs; i++) {
+        pj = pj / 10;
+      }
+      if (sumSh > 0) {
+        mdZy.innerText = pj.toFixed(bs);
+      } else {
+        mdZy.innerText = "0";
+      }
+    }
+
+    function sumDwById(sumDw, dwId, shId) {
+      var dw = document.getElementById(dwId);
+      var sh = document.getElementById(shId);
+      if (dw.value !== "" && sh.value !== "") {
+        sumDw = sumDw + dw.value * sh.value * 1;
+      }
+      return sumDw;
+    }
+
+    function sumShById(sumSh, shId) {
+      var sh = document.getElementById(shId);
+      if (sh.value !== "") {
+        sumSh = sumSh + sh.value * 1;
+      }
+      return sumSh;
+    }
+
+    function getBeishuByDw(dwId) {
+      var dw = document.getElementById(dwId);
+      var index = dw.value.indexOf(".");
+      var length = dw.value.length;
+      if (index < 0) {
+        return 0;
+      }
+      return length - 1 - index;
+    }
+
+    function resetSh() {
+      resetInputById("sddw1", "sdsh1");
+      resetInputById("sddw2", "sdsh2");
+      resetInputById("sddw3", "sdsh3");
+      resetInputById("sddw4", "sdsh4");
+      resetInputById("sddw5", "sdsh5");
+      resetInputById("sddw6", "sdsh6");
+      resetInputById("sddw7", "sdsh7");
+      resetInputById("sddw8", "sdsh8");
+      resetInputById("sddw9", "sdsh9");
+      resetInputById("sddw10", "sdsh10");
+      sdCal();
+    }
+
+    function resetInputById(dwId, shId) {
+      var dw = document.getElementById(dwId);
+      dw.value = "";
+      var sh = document.getElementById(shId);
+      sh.value = "";
+    }
+
+  </script>
+</head>
+
+<body>
+
+  test
+
+</body>
+
+</html>
